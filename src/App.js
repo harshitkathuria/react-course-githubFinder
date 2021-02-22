@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
+import Home from './components/pages/Home';
 import Alert from './components/layout/Alert';
-import Users from './components/users/Users';
 import User from './components/users/User';
-import Search from './components/users/Search';
+import notFound from './components/pages/notFound';
 import About from './components/pages/About';
 import GithubState from './context/github/GithubState';
+import AlertState from './context/alert/AlertState';
 import './App.css';
 
 const App = () => {
-
-  const [alert, setAlertState] = useState(null)
 
   // Fired as soon as the component gets mounted(placed on DOM) -> for class based component
   // async componentDidMount() {
@@ -19,12 +18,6 @@ const App = () => {
   //   const res = await axios.get(`https://api.github.com/users?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`)
   //   this.setState({ users: res.data, loading: false})
   // }
-
-  // Set Alert when submit is pressed without entering name 
-  const setAlert = (msg, type) => {
-    setAlertState({ msg, type })
-    setTimeout(() => { setAlertState(null) }, 3000)
-  }
 
     /** Alternative for JSX 
     return React.createElement('div', { className: 'App'}, React.createElement('h1', null, 'GoodBye'));
@@ -44,25 +37,23 @@ const App = () => {
       <></>
     */
   <GithubState>
-    <Router>
-      <div className="App">
-        <Navbar />
-        <div className="container">
-          {/*Switch Components return only the first matched Route */}
-          <Switch>
-            <Route path="/" exact render={props => (
-              <>
-                <Alert alert={alert} />
-                <Search setAlert={setAlert} />
-                <Users />
-              </>
-            )} />
-            <Route path="/about" exact component={About} />
-            <Route exact path="/user/:login" component={User} />
-          </Switch>
+    <AlertState>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <div className="container">
+            <Alert />
+            {/*Switch Components return only the first matched Route */}
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/about" exact component={About} />
+              <Route exact path="/user/:login" component={User} />
+              <Route component={notFound} />
+            </Switch>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </AlertState>
   </GithubState>
   );
 }
